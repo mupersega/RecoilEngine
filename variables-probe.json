@@ -1,0 +1,358 @@
+{
+ "engine": "2026.09.01-102-g58f47c9 rmlui/6.3",
+ "dpRatio": 0.80000001,
+ "date": "2026-11-14",
+ "questions": [
+  {
+   "name": "var-basic",
+   "question": "a custom property on body is read by var() on a child",
+   "answer": "yes",
+   "rml": "<div id='a'/>",
+   "rcss": "body { --c: #ff0000; } #a { position: absolute; left: 0dp; top: 0dp; width: 100dp; height: 100dp; background-color: var(--c); }",
+   "checks": [
+    {
+     "check": "pixel",
+     "at": [
+      50,
+      50
+     ],
+     "want": [
+      255,
+      0,
+      0
+     ],
+     "got": [
+      255,
+      0,
+      0
+     ],
+     "dE": 0.0,
+     "ok": true
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "var-fallback",
+   "question": "var() with a fallback uses it when the property is not declared",
+   "answer": "yes",
+   "rml": "<div id='a'/>",
+   "rcss": "#a { position: absolute; left: 0dp; top: 0dp; width: 100dp; height: 100dp; background-color: var(--nothing, #00ff00); }",
+   "checks": [
+    {
+     "check": "pixel",
+     "at": [
+      50,
+      50
+     ],
+     "want": [
+      0,
+      255,
+      0
+     ],
+     "got": [
+      0,
+      255,
+      0
+     ],
+     "dE": 0.0,
+     "ok": true
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "var-unresolved",
+   "question": "var() with no declaration and no fallback drops the declaration (ground shows through)",
+   "answer": "yes",
+   "rml": "<div id='a'/>",
+   "rcss": "#a { position: absolute; left: 0dp; top: 0dp; width: 100dp; height: 100dp; background-color: var(--nothing); }",
+   "checks": [
+    {
+     "check": "pixel",
+     "at": [
+      50,
+      50
+     ],
+     "want": [
+      0,
+      0,
+      0
+     ],
+     "got": [
+      0,
+      0,
+      0
+     ],
+     "dE": 0.0,
+     "ok": true
+    }
+   ],
+   "warnings": [
+    "Error: [RmlUi] Invalid substitution, variable '--nothing' not defined. In element: div#a < body < #root#shared"
+   ]
+  },
+  {
+   "name": "var-inherits",
+   "question": "a custom property declared on an ancestor reaches a grandchild",
+   "answer": "yes",
+   "rml": "<div id='o'><div id='m'><div id='a'/></div></div>",
+   "rcss": "#o { --c: #ff0000; position: absolute; left: 0dp; top: 0dp; width: 100dp; height: 100dp; } #m { display: block; } #a { position: absolute; left: 0dp; top: 0dp; width: 100dp; height: 100dp; background-color: var(--c); }",
+   "checks": [
+    {
+     "check": "pixel",
+     "at": [
+      50,
+      50
+     ],
+     "want": [
+      255,
+      0,
+      0
+     ],
+     "got": [
+      255,
+      0,
+      0
+     ],
+     "dE": 0.0,
+     "ok": true
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "var-override",
+   "question": "a closer declaration overrides an inherited one",
+   "answer": "yes",
+   "rml": "<div id='o'><div id='a'/></div>",
+   "rcss": "body { --c: #ff0000; } #o { --c: #0000ff; position: absolute; left: 0dp; top: 0dp; width: 100dp; height: 100dp; } #a { position: absolute; left: 0dp; top: 0dp; width: 100dp; height: 100dp; background-color: var(--c); }",
+   "checks": [
+    {
+     "check": "pixel",
+     "at": [
+      50,
+      50
+     ],
+     "want": [
+      0,
+      0,
+      255
+     ],
+     "got": [
+      0,
+      0,
+      255
+     ],
+     "dE": 0.0,
+     "ok": true
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "var-length",
+   "question": "a length token through var() sizes a box (width: var(--w) with --w: 50dp)",
+   "answer": "yes",
+   "rml": "<div id='a'/>",
+   "rcss": "body { --w: 50dp; } #a { position: absolute; left: 0dp; top: 0dp; height: 100dp; width: var(--w); background-color: #ff0000; }",
+   "checks": [
+    {
+     "check": "box-w",
+     "id": "a",
+     "want": 50,
+     "got": 50.0,
+     "ok": true
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "var-in-shorthand",
+   "question": "var() inside a shorthand (margin: 0dp 0dp 0dp var(--gap)) is expanded",
+   "answer": "yes",
+   "rml": "<div id='a'/>",
+   "rcss": "body { --gap: 20dp; } #a { display: block; width: 50dp; height: 50dp; margin: 0dp 0dp 0dp var(--gap); background-color: #ff0000; }",
+   "checks": [
+    {
+     "check": "box-x",
+     "id": "a",
+     "want": 20,
+     "got": 20.0,
+     "ok": true
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "var-in-decorator",
+   "question": "var() inside a decorator's colour list (horizontal-gradient(var(--c1) var(--c2)))",
+   "answer": "yes",
+   "rml": "<div id='a'/>",
+   "rcss": "body { --c1: #ff0000; --c2: #0000ff; } #a { position: absolute; left: 0dp; top: 0dp; width: 100dp; height: 100dp; decorator: horizontal-gradient(var(--c1) var(--c2)); }",
+   "checks": [
+    {
+     "check": "pixel",
+     "at": [
+      2,
+      50
+     ],
+     "want": [
+      249,
+      0,
+      6
+     ],
+     "got": [
+      247,
+      0,
+      8
+     ],
+     "dE": 1.11,
+     "ok": true
+    },
+    {
+     "check": "pixel",
+     "at": [
+      50,
+      50
+     ],
+     "want": [
+      126,
+      0,
+      129
+     ],
+     "got": [
+      126,
+      0,
+      129
+     ],
+     "dE": 0.0,
+     "ok": true
+    },
+    {
+     "check": "pixel",
+     "at": [
+      97,
+      50
+     ],
+     "want": [
+      6,
+      0,
+      249
+     ],
+     "got": [
+      5,
+      0,
+      250
+     ],
+     "dE": 0.44,
+     "ok": true
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "var-whole-value-list",
+   "question": "a custom property holding a whole value list (--f: 'Montserrat') is usable as font-family through var()",
+   "answer": "yes",
+   "rml": "<div id='a'>Mm</div>",
+   "rcss": "body { --f: Montserrat; } #a { position: absolute; left: 0dp; top: 0dp; width: 100dp; height: 100dp; font-family: var(--f); font-size: 40dp; color: #ff0000; }",
+   "checks": [
+    {
+     "check": "any-red",
+     "hits": 68,
+     "ok": true
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "var-cycle",
+   "question": "two custom properties that reference each other are refused (the declaration drops, the fallback is not used)",
+   "answer": "yes",
+   "rml": "<div id='a'/>",
+   "rcss": "body { --x: var(--y); --y: var(--x); } #a { position: absolute; left: 0dp; top: 0dp; width: 100dp; height: 100dp; background-color: var(--x, #00ff00); }",
+   "checks": [
+    {
+     "check": "pixel",
+     "at": [
+      50,
+      50
+     ],
+     "want": [
+      0,
+      0,
+      0
+     ],
+     "got": [
+      0,
+      0,
+      0
+     ],
+     "dE": 0.0,
+     "ok": true
+    }
+   ],
+   "warnings": [
+    "Error: [RmlUi] Invalid substitution, cycle detected with variable: --y. In element: body < #root#shared"
+   ]
+  },
+  {
+   "name": "var-transition",
+   "question": "a property whose value comes from var() still transitions when the variable changes by a class",
+   "answer": "yes",
+   "rml": "<div id='a'/>",
+   "rcss": "body { --w: 20dp; } #a { position: absolute; left: 0dp; top: 0dp; height: 100dp; width: var(--w); background-color: #ff0000; transition: width 1.0s linear-in-out; } #a.big { --w: 80dp; }",
+   "checks": [
+    {
+     "check": "box-w-between",
+     "id": "a",
+     "after": 0.45,
+     "between": [
+      25,
+      75
+     ],
+     "got": 47.0,
+     "ok": true
+    },
+    {
+     "check": "box-w-after",
+     "id": "a",
+     "after": 1.4,
+     "want": 80,
+     "got": 80.0,
+     "ok": true
+    }
+   ],
+   "warnings": []
+  },
+  {
+   "name": "var-token-sheet",
+   "question": "every token declared on body by the layer's own forms, one read back by var(--surface-panel) (the generated sheet's shape)",
+   "answer": "yes",
+   "rml": "<div id='a'/>",
+   "rcss": "#a { position: absolute; left: 0dp; top: 0dp; width: 100dp; height: 100dp; background-color: var(--surface-panel); }",
+   "checks": [
+    {
+     "check": "token-pixel",
+     "token": "surface-panel",
+     "form": "#1b2020e6",
+     "want": [
+      27,
+      32,
+      32
+     ],
+     "got": [
+      24,
+      28,
+      28
+     ],
+     "dE": 1.94,
+     "ok": true
+    }
+   ],
+   "warnings": [],
+   "declaredTokens": 295
+  }
+ ]
+}
