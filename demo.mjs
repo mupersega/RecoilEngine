@@ -17,7 +17,7 @@ const RML = `<div id="theme"><div class="card">
 
 const RCSS = `
 #theme { --accent: #3fa9f5; --accent-soft: #3fa9f540; --surface: #10161c; --panel: #1b242d; --text: #e6edf3; --muted: #8b98a5; --gap: 12dp; --radius: 6dp; --fill: 70%;
-  display: block; position: absolute; left: 0dp; top: 0dp; width: 420dp; height: 230dp; background-color: var(--surface); }
+  display: block; position: absolute; left: 0dp; top: 0dp; width: 420dp; height: 280dp; background-color: var(--surface); }
 .card { display: block; position: absolute; left: var(--gap); top: var(--gap); right: var(--gap); bottom: var(--gap); background-color: var(--panel); border: 2dp var(--accent); border-radius: var(--radius); padding: var(--gap); }
 .title { display: block; color: var(--text); font-size: 22dp; font-weight: 600; }
 .sub { display: block; color: var(--muted); font-size: 14dp; margin-top: 4dp; }
@@ -57,7 +57,7 @@ try {
   console.log("session", JSON.stringify(log.session));
   log.enable = (await call("bar_widget", { action: "enable", name: "RML stage" })).text;
   await call("bar_wait", { seconds: 1 }).catch(() => {});
-  log.load = (await call("bar_eval", { code: `return WG.rmlStage.load({ rml = ${lua(RML)}, rcss = ${lua(RCSS)}, width = 420, height = 230, left = 40, top = 40, ground = "#000000", raw = true })` })).json;
+  log.load = (await call("bar_eval", { code: `return WG.rmlStage.load({ rml = ${lua(RML)}, rcss = ${lua(RCSS)}, width = 420, height = 280, left = 40, top = 40, ground = "#000000", raw = true })` })).json;
   await call("bar_wait", { seconds: 1 }).catch(() => {});
   const shoot = async (name) => {
     const s = await call("bar_screenshot", { document: "RML stage", format: "png" });
